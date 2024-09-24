@@ -10,5 +10,6 @@ services:
     volumes:
       - ./.docker/dbdata:/var/lib/postgresql/data
     environment:
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=root
+      - POSTGRES_DB=base_postgres
