@@ -19,8 +19,9 @@ export class CoursesController {
 
   @Get()
   @HttpCode(HttpStatus.ACCEPTED)
-  findAll() {
-    const data = this.coureService.findAll();
+  async findAll() {
+    const data = await this.coureService.findAll();
+    console.log(data);
 
     const response = {
       status: 202,
@@ -46,9 +47,9 @@ export class CoursesController {
   }
 
   @Post()
-  @HttpCode(HttpStatus.NO_CONTENT)
-  create(@Body() param: CreateCourseDto) {
-    this.coureService.create(param);
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() param: CreateCourseDto) {
+    await this.coureService.create(param);
 
     const data = {
       status: 204,

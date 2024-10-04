@@ -1,4 +1,5 @@
 import { IsString } from 'class-validator';
+import { Tag } from 'src/courses/entities/tags.entity';
 
 export class UpdateCourseDto {
   @IsString()
@@ -8,5 +9,5 @@ export class UpdateCourseDto {
   readonly description?: string;
 
   @IsString({ each: true })
-  readonly tags?: string[];
+  readonly tags?: Tag[];
 }
