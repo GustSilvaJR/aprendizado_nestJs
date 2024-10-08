@@ -36,7 +36,10 @@ export class CoursesService {
   }
 
   async findOne(id: number) {
-    const course = await this.courseRepository.findOne({ where: { id: id } });
+    const course = await this.courseRepository.findOne({
+      where: { id: id },
+      relations: ['tags'],
+    });
 
     if (!course) {
       throw new HttpException(
@@ -49,42 +52,48 @@ export class CoursesService {
   }
 
   async create(createCourseDto: CreateCourseDto) {
-    // Precarregar e garantir que as tags sejam salvas
     const tags = await Promise.all(
       createCourseDto.tags.map((tag: string) => this.preloadTagByName(tag)),
     );
 
-    // Criar o objeto do curso com as tags associadas
     const courseObject = {
       ...createCourseDto,
-      tags, // Certifique-se de que são instâncias persistidas de Tag
+      tags,
     };
 
-    console.log('A porra do objeto: ', courseObject);
-
-    // Criar o curso
     const course = this.courseRepository.create(courseObject);
 
-    // Salvar o curso com as tags associadas
     return await this.courseRepository.save(course);
   }
 
   async update(id: number, updateCourseDto: UpdateCourseDto) {
-    const tags = await Promise.all(
-      updateCourseDto.tags.map((tag: Tag) => this.preloadTagByName(tag.name)),
-    );
-
-    const course = await this.courseRepository.preload({
-      id: id,
-      ...updateCourseDto,
-      tags,
+    const existingCourse = await this.courseRepository.findOne({
+      where: { id },
+      relations: ['tags'],
     });
 
-    if (!course) {
+    if (!existingCourse) {
       throw new NotFoundException(`Course ID ${id} not found`);
     }
 
-    return await this.courseRepository.save(course);
+    if (updateCourseDto.tags) {
+      const tags = await Promise.all(
+        updateCourseDto.tags.map(
+          async (tag: string) => await this.preloadTagByName(tag),
+        ),
+      );
+      existingCourse.tags = tags;
+    }
+
+    if (updateCourseDto.name) {
+      existingCourse.name = updateCourseDto.name;
+    }
+
+    if (updateCourseDto.description) {
+      existingCourse.description = updateCourseDto.description;
+    }
+
+    return await this.courseRepository.save(existingCourse);
   }
 
   async remove(id: number) {
@@ -103,12 +112,10 @@ export class CoursesService {
     const tag = await this.tagRepository.findOne({ where: { name } });
 
     if (tag) {
-      // Se a tag já existir, retorna a instância persistida
       return tag;
     }
 
-    // Se não existir, cria e salva a nova tag
     const newTag = this.tagRepository.create({ name });
-    return await this.tagRepository.save(newTag); // Salva e retorna a nova tag
+    return await this.tagRepository.save(newTag);
   }
 }

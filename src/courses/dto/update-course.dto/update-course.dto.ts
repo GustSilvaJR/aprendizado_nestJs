@@ -1,13 +1,16 @@
+import { Optional } from '@nestjs/common';
 import { IsString } from 'class-validator';
-import { Tag } from 'src/courses/entities/tags.entity';
 
 export class UpdateCourseDto {
+  @Optional()
   @IsString()
-  readonly name?: string;
+  readonly name: string;
 
+  @Optional()
   @IsString()
-  readonly description?: string;
+  readonly description: string;
 
+  @Optional()
   @IsString({ each: true })
-  readonly tags?: Tag[];
+  readonly tags?: string[];
 }
