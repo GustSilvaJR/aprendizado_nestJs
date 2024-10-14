@@ -13,6 +13,7 @@ import { UpdateCourseDto } from '../../dto/update-course.dto/update-course.dto';
 
 import { Course } from '../../entities/course.entity';
 import { Tag } from '../../entities/tags.entity';
+import { UnauthorizedError } from 'src/common/errors/UnauthorizedError';
 
 @Injectable()
 export class CoursesService {
@@ -32,6 +33,7 @@ export class CoursesService {
   ];
 
   async findAll() {
+    throw new UnauthorizedError('Nao autorizado.');
     return await this.courseRepository.find({ relations: ['tags'] });
   }
 
