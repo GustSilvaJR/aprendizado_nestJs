@@ -8,11 +8,11 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { CreateCourseDto } from 'src/courses/dto/create-course.dto/create-course.dto';
-import { UpdateCourseDto } from 'src/courses/dto/update-course.dto/update-course.dto';
+import { CreateCourseDto } from '../../dto/create-course.dto/create-course.dto';
+import { UpdateCourseDto } from '../../dto/update-course.dto/update-course.dto';
 
-import { Course } from 'src/courses/entities/course.entity';
-import { Tag } from 'src/courses/entities/tags.entity';
+import { Course } from '../../entities/course.entity';
+import { Tag } from '../../entities/tags.entity';
 
 @Injectable()
 export class CoursesService {
@@ -35,7 +35,7 @@ export class CoursesService {
     return await this.courseRepository.find({ relations: ['tags'] });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const course = await this.courseRepository.findOne({
       where: { id: id },
       relations: ['tags'],
@@ -66,7 +66,7 @@ export class CoursesService {
     return await this.courseRepository.save(course);
   }
 
-  async update(id: number, updateCourseDto: UpdateCourseDto) {
+  async update(id: string, updateCourseDto: UpdateCourseDto) {
     const existingCourse = await this.courseRepository.findOne({
       where: { id },
       relations: ['tags'],
@@ -96,7 +96,7 @@ export class CoursesService {
     return await this.courseRepository.save(existingCourse);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const course = await this.courseRepository.findOne({
       where: { id: id },
     });
@@ -108,7 +108,7 @@ export class CoursesService {
     return await this.courseRepository.remove(course);
   }
 
-  private async preloadTagByName(name: string): Promise<Tag> {
+  public async preloadTagByName(name: string): Promise<Tag> {
     const tag = await this.tagRepository.findOne({ where: { name } });
 
     if (tag) {

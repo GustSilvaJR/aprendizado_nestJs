@@ -34,7 +34,7 @@ export class CoursesController {
 
   @Get('one/:id')
   @HttpCode(HttpStatus.ACCEPTED)
-  findOne(@Param('id') param) {
+  findOne(@Param('id') param: string) {
     const data = this.coureService.findOne(param);
 
     const response = {
@@ -62,7 +62,7 @@ export class CoursesController {
 
   @Patch('update/:id')
   @HttpCode(HttpStatus.ACCEPTED)
-  update(@Param('id') id, @Body() updateCourseDto: UpdateCourseDto) {
+  update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
     this.coureService.update(id, updateCourseDto);
 
     const data = {
@@ -76,8 +76,8 @@ export class CoursesController {
 
   @Delete('delete/:id')
   @HttpCode(HttpStatus.ACCEPTED)
-  delete(@Param('id') id) {
-    this.coureService.remove(Number(id));
+  delete(@Param('id') id: string) {
+    this.coureService.remove(id);
     console.log(id, typeof id);
 
     const data = {
