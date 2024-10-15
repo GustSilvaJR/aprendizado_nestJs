@@ -9,10 +9,12 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { ApiForbiddenResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateCourseDto } from 'src/courses/dto/create-course.dto/create-course.dto';
 import { UpdateCourseDto } from 'src/courses/dto/update-course.dto/update-course.dto';
 import { CoursesService } from 'src/courses/services/courses/courses.service';
 
+@ApiTags('Courses')
 @Controller('courses')
 export class CoursesController {
   constructor(private readonly coureService: CoursesService) {}
@@ -46,6 +48,8 @@ export class CoursesController {
     return response;
   }
 
+  @ApiResponse({ status: 409, description: 'Conflito de curso' })
+  @ApiForbiddenResponse({ description: 'Acesso negado ' })
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() param: CreateCourseDto) {
