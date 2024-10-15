@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -14,6 +9,7 @@ import { UpdateCourseDto } from '../../dto/update-course.dto/update-course.dto';
 import { Course } from '../../entities/course.entity';
 import { Tag } from '../../entities/tags.entity';
 import { UnauthorizedError } from 'src/common/errors/UnauthorizedError';
+import { NotFoundError } from 'src/common/errors/NotFoundError';
 
 @Injectable()
 export class CoursesService {
@@ -23,14 +19,6 @@ export class CoursesService {
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
   ) {}
-
-  private courses: any[] = [
-    {
-      name: 'Curso para aprender a vender curso',
-      description: 'Curso perfeito para quem quer ser tapeado',
-      tags: ['Chorume', 'Faz o M'],
-    },
-  ];
 
   async findAll() {
     throw new UnauthorizedError('Nao autorizado.');
@@ -44,10 +32,7 @@ export class CoursesService {
     });
 
     if (!course) {
-      throw new HttpException(
-        `Curso com ID ${id} não encontrado`,
-        HttpStatus.NOT_FOUND,
-      );
+      throw new NotFoundError('Curso não encontrado');
     }
 
     return course ? course : 'Nenhum registro encontrado';
